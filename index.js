@@ -37,6 +37,6 @@ app.use("/get/ip", async (req, res) => {
   res.send(await run(req.ip));
 });
 
-app.listen(3000, () => {
+app.listen(process.env.PORT||5000, () => {
   console.log("SERVER SRUNNING AT PORT 3000");
 });
