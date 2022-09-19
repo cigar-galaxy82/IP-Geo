@@ -1,27 +1,27 @@
-import express from 'express'
-const app = express()
-import {publicIpv4} from 'public-ip';
-import  { SuperfaceClient } from '@superfaceai/one-sdk';
-
+import express from "express";
+import { SuperfaceClient } from "@superfaceai/one-sdk";
+const app = express();
+app.set("trust proxy", true);
 const sdk = new SuperfaceClient();
 
 async function run(ip) {
   // Load the profile
-  const profile = await sdk.getProfile('address/ip-geolocation@1.0.1');
+  const profile = await sdk.getProfile("address/ip-geolocation@1.0.1");
 
   // Use the profile
-  const result = await profile
-    .getUseCase('IpGeolocation')
-    .perform({
+  const result = await profile.getUseCase("IpGeolocation").perform(
+    {
       ipAddress: ip
-    }, {
-      provider: 'ipdata',
+    },
+    {
+      provider: "ipdata",
       security: {
         apikey: {
-          apikey: '9a511b6fc8334e1852cfbbd4ff3f1af3c42ed6abc75e96a1648b969a'
+          apikey: "9a511b6fc8334e1852cfbbd4ff3f1af3c42ed6abc75e96a1648b969a"
         }
       }
-    });
+    }
+  );
 
   // Handle the result
   try {
@@ -32,11 +32,11 @@ async function run(ip) {
   }
 }
 
-app.get('/', async (req,res) =>  {
-    res.send(await run(await publicIpv4()))
-})
+app.use("/get/ip", async (req, res) => {
+  console.log(req.ip);
+  res.send(await run(req.ip));
+});
 
-
-app.listen(3000, ()=>{
-    console.log("SERVER SRUNNING AT PORT 3000")
-})
+app.listen(3000, () => {
+  console.log("SERVER SRUNNING AT PORT 3000");
+});
